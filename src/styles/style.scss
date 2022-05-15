@@ -1,0 +1,72 @@
+@import "./utils/_var.scss";
+@import "./utils/_fonts.scss";
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  overscroll-behavior: none;
+}
+
+html {
+  background-color: $primary2-color;
+}
+
+.asscrollbar {
+  display: none;
+}
+
+canvas.webgl {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: -1;
+}
+
+section {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+
+  &.landing {
+    div {
+      height: 50%;
+      display: flex;
+      align-items: flex-start;
+      padding: 2.5rem 0 0 2.5rem;
+
+      &:last-child {
+        justify-content: flex-end;
+        align-items: flex-end;
+        padding: 0 2.5rem 2.5rem 0;
+      }
+
+      h2 {
+        font-family: motor, monospace;
+        color: $primary2-color;
+        font-size: 7rem;
+        overflow: hidden;
+        span {
+          display: inline-block;
+          opacity: 0;
+          transform: translateY(7rem);
+        }
+      }
+    }
+  }
+
+  &.content {
+    background-color: $primary2-color;
+    width: 200vw;
+    display: flex;
+    flex-wrap: nowrap;
+
+    .wrapper {
+      width: 100vw;
+      height: 100%;
+      // background-color: red;
+    }
+  }
+}
