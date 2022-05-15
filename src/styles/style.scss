@@ -59,14 +59,78 @@ section {
 
   &.content {
     background-color: $primary2-color;
-    width: 200vw;
+    width: 200%;
     display: flex;
     flex-wrap: nowrap;
 
-    .wrapper {
-      width: 100vw;
-      height: 100%;
-      // background-color: red;
+    > div {
+      &.about-section {
+        margin-top: 5vh;
+        background-color: rgba(255, 0, 0, 0.105);
+        height: 100%;
+        width: 90vw;
+        padding: 5vw;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+
+        p {
+          width: 45rem;
+          font-size: 1.5rem;
+          font-family: mr-eaves-xl-modern, sans-serif;
+          font-weight: 400;
+          font-style: normal;
+        }
+
+        .contact {
+          width: 100%;
+          height: 5vh;
+          z-index: 1000;
+
+          ul {
+            width: 25vw;
+            display: flex;
+            justify-content: space-between;
+            li {
+              list-style: none;
+              a {
+                color: $secondary-color;
+                text-decoration: none;
+                font-size: 1rem;
+                text-transform: uppercase;
+                font-family: motor, monospace;
+              }
+            }
+          }
+        }
+      }
+
+      &.projects-section {
+        position: relative;
+        height: 100%;
+        width: 110vw;
+        background-color: rgba(0, 128, 0, 0.1);
+        h2 {
+          position: absolute;
+          top: 0;
+          left: 0;
+          font-family: motor, monospace;
+          font-size: 7rem;
+          color: $secondary-color;
+        }
+
+        .projects {
+          display: flex;
+          margin-left: 7rem;
+          margin-top: 15rem;
+          background-color: rgba(128, 0, 128, 0.129);
+
+          .project {
+            width: 40rem;
+            background-color: rgba(205, 134, 63, 0.139);
+          }
+        }
+      }
     }
   }
 }

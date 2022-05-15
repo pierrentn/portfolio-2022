@@ -56,7 +56,9 @@ export default class Experience {
     this.loop();
 
     window.addEventListener("resize", () => this.onResize());
-    window.addEventListener("mousemove", (e) => this.onMouseMove(e));
+    setTimeout(() => {
+      window.addEventListener("mousemove", (e) => this.onMouseMove(e));
+    }, 2000);
   }
 
   setVisibleSize() {
@@ -173,14 +175,14 @@ export default class Experience {
   }
 
   onMouseMove(e) {
-    if (this.introFinished) {
-      gsap.to(this.mousePos, {
-        x: e.clientX / this.sizes.width,
-        y: 0.4 + (e.clientY / this.sizes.height) * 0.2,
-        duration: 4.5,
-        ease: "power4",
-      });
-    }
+    // if (this.introFinished) {
+    gsap.to(this.mousePos, {
+      x: e.clientX / this.sizes.width,
+      y: 0.4 + (e.clientY / this.sizes.height) * 0.2,
+      duration: 4.5,
+      ease: "power4",
+    });
+    // }
   }
 
   loop() {
