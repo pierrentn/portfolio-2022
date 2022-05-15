@@ -2,6 +2,7 @@ lockfileVersion: 5.3
 
 specifiers:
   '@ashthornton/asscroll': ^2.0.7
+  events: ^3.3.0
   gsap: ^3.10.4
   sass: ^1.51.0
   textsplitter: ^2.0.1
@@ -11,6 +12,7 @@ specifiers:
 
 dependencies:
   '@ashthornton/asscroll': 2.0.7
+  events: 3.3.0
   gsap: 3.10.4
   textsplitter: 2.0.1
   three: 0.140.2
@@ -287,6 +289,11 @@ packages:
 
   /estree-walker/2.0.2:
     resolution: {integrity: sha512-Rfkk/Mp/DL7JVje3u18FxFujQlTNR2q6QfMSMB7AvCBx91NGj/ba3kCfza0f6dVDbw7YlRf/nDrn7pQrCCyQ/w==}
+    dev: false
+
+  /events/3.3.0:
+    resolution: {integrity: sha512-mQw+2fkQbALzQ7V0MY0IqdnXNOeTtP4r0lN9z7AAawCXgqea7bDii20AYrIBrFd/Hx0M2Ocz6S111CaFkUcb0Q==}
+    engines: {node: '>=0.8.x'}
     dev: false
 
   /fill-range/7.0.1:

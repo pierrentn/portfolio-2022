@@ -59,16 +59,15 @@ section {
 
   &.content {
     background-color: $primary2-color;
-    width: 200%;
+    width: 255%;
     display: flex;
     flex-wrap: nowrap;
 
     > div {
       &.about-section {
         margin-top: 5vh;
-        background-color: rgba(255, 0, 0, 0.105);
         height: 100%;
-        width: 90vw;
+        width: 95vw;
         padding: 5vw;
         display: flex;
         flex-direction: column;
@@ -77,9 +76,12 @@ section {
         p {
           width: 45rem;
           font-size: 1.5rem;
-          font-family: mr-eaves-xl-modern, sans-serif;
+          font-family: forma-djr-micro, sans-serif;
           font-weight: 400;
           font-style: normal;
+          span {
+            display: inline-block;
+          }
         }
 
         .contact {
@@ -94,6 +96,7 @@ section {
             li {
               list-style: none;
               a {
+                display: inline-block;
                 color: $secondary-color;
                 text-decoration: none;
                 font-size: 1rem;
@@ -108,8 +111,8 @@ section {
       &.projects-section {
         position: relative;
         height: 100%;
-        width: 110vw;
-        background-color: rgba(0, 128, 0, 0.1);
+        width: 155vw;
+        // background-color: rgba(0, 128, 0, 0.1);
         h2 {
           position: absolute;
           top: 0;
@@ -122,12 +125,53 @@ section {
         .projects {
           display: flex;
           margin-left: 7rem;
-          margin-top: 15rem;
-          background-color: rgba(128, 0, 128, 0.129);
+          // background-color: rgba(128, 0, 128, 0.129);
 
           .project {
-            width: 40rem;
-            background-color: rgba(205, 134, 63, 0.139);
+            height: 50vh;
+            width: 35rem;
+            margin-left: 15rem;
+            // background-color: rgba(205, 134, 63, 0.139);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+
+            &:first-of-type {
+              margin-top: 15rem;
+              margin-lef: 0;
+            }
+
+            &:nth-of-type(2) {
+              margin-top: 5rem;
+            }
+        
+            &:nth-of-type(3) {
+              margin-top: 25rem;
+            }
+
+            img {
+              width: 100%;
+              height: auto;
+            }
+            .infos {
+              h3 {
+                margin-bottom: 0.7rem;
+              }
+
+              margin-top: 3vh;
+              margin-bottom: 3vh;
+              font-family: forma-djr-micro, sans-serif;
+              font-weight: 400;
+              font-style: normal;
+              color: $secondary-color;
+            }
+            a {
+              align-self: flex-end;
+              color: $secondary-color;
+              text-decoration: none;
+              font-family: forma-djr-micro, sans-serif;
+              color: $secondary-color;
+            }
           }
         }
       }
