@@ -92,16 +92,12 @@ export default class Experience {
   }
 
   setObjects() {
-    console.log(this.visibleSize);
-    this.cubeGeo = new THREE.PlaneGeometry(
+    this.planeGeo = new THREE.PlaneGeometry(
       this.visibleSize.width,
       this.visibleSize.height
     );
-    // this.cubeGeo = new THREE.PlaneGeometry(
-    //   this.visibleSize.width,
-    //   this.visibleSize.height
-    // );
-    this.cubeMat = new THREE.ShaderMaterial({
+
+    this.planeMat = new THREE.ShaderMaterial({
       fragmentShader: fragment,
       vertexShader: vertex,
       uniforms: {
@@ -122,17 +118,16 @@ export default class Experience {
       transparent: true,
     });
 
-    this.cube = new THREE.Mesh(this.cubeGeo, this.cubeMat);
-    this.cube.position.set(0, 0, 0);
+    this.plane = new THREE.Mesh(this.planeGeo, this.planeMat);
+    this.plane.position.set(0, 0, 0);
 
-    this.scene.add(this.cube);
+    this.scene.add(this.plane);
   }
 
   introAnim() {
-    console.log("hey");
     //Scale
     gsap.fromTo(
-      this.cubeMat.uniforms.uProgressTrans,
+      this.planeMat.uniforms.uProgressTrans,
       {
         value: 0.9,
       },
@@ -150,7 +145,7 @@ export default class Experience {
 
     //FadeIn
     gsap.fromTo(
-      this.cubeMat.uniforms.uProgressFade,
+      this.planeMat.uniforms.uProgressFade,
       {
         value: 0.999,
       },
@@ -164,7 +159,6 @@ export default class Experience {
         // yoyo: "true",
         delay: 1.5,
         onComplete: () => {
-          // ee.emit("ladingFinished");
           this.introFinished = true;
         },
       }
@@ -197,7 +191,7 @@ export default class Experience {
   loop() {
     this.elapsed = this.clock.getElapsedTime();
 
-    this.cubeMat.uniforms.uTime.value = this.elapsed;
+    this.planeMat.uniforms.uTime.value = this.elapsed;
 
     if (this.controls) this.controls.update();
 

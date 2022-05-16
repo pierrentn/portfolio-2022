@@ -45,4 +45,4 @@ window.addEventListener("load", () => {
   new Landing();
   new Content(asscroll.containerElement);
 });
-ee.on("ladingFinished", () => asscroll.enable());
+ee.on("loadingFinished", () => asscroll.enable());

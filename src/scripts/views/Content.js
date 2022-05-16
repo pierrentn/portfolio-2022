@@ -113,7 +113,6 @@ export default class Content {
         end: `+=${this.rootWidth}`,
       },
     });
-    console.log(this.rootWidth);
   }
 
   onResize() {
