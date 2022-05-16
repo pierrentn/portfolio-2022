@@ -16,6 +16,28 @@ html {
   display: none;
 }
 
+a {
+  position: relative;
+}
+
+a::before {
+  content: "";
+  position: absolute;
+  bottom: -0.1rem;
+  left: 0;
+  right: 0;
+  height: 0.05rem;
+  background-color: $secondary-color;
+  transform-origin: left;
+  transform: scale(0);
+  transition: transform 0.375s;
+}
+
+a:hover::before {
+  transform: scale(1);
+  transition: transform 0.375s;
+}
+
 canvas.webgl {
   position: absolute;
   top: 0;
@@ -174,7 +196,7 @@ section {
               align-self: flex-end;
               color: $secondary-color;
               text-decoration: none;
-              font-family: forma-djr-micro, sans-serif;
+              font-family: motor, monospace;
               color: $secondary-color;
             }
           }
