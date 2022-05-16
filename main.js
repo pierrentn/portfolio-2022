@@ -15,6 +15,10 @@ const asscroll = new ASScroll({
 new Experience(document.querySelector("canvas.webgl"));
 
 window.addEventListener("DOMContentLoaded", () => {
+  document.querySelector("#app").style.setProperty("visibility", "visible");
+  new Landing();
+  new Content();
+
   gsap.ticker.add(asscroll.update);
 
   ScrollTrigger.defaults({
@@ -39,10 +43,6 @@ window.addEventListener("DOMContentLoaded", () => {
 
   asscroll.on("update", ScrollTrigger.update);
   ScrollTrigger.addEventListener("refresh", asscroll.resize);
-
-  document.querySelector("#app").style.setProperty("visibility", "visible");
-  new Landing();
-  new Content();
 });
 
 ee.on("ladingFinished", () => asscroll.enable());
