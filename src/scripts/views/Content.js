@@ -14,7 +14,7 @@ export default class Content {
 
     this.setHorizontalScroll();
     this.aboutAnim();
-    this.projectsAnim()
+    this.projectsAnim();
     window.addEventListener("resize", () => this.onResize());
   }
 
@@ -36,7 +36,7 @@ export default class Content {
           trigger: ".split-lines-about",
         },
         stagger: 0.05,
-        delay: 0.1
+        delay: 0.1,
       }
     );
 
@@ -54,32 +54,36 @@ export default class Content {
           trigger: ".contact a",
         },
         stagger: 0.05,
-        delay: 0.1
+        delay: 0.1,
       }
     );
   }
 
   projectsAnim() {
-    const projects = document.querySelectorAll('.project')
-    projects.forEach(el => {
-      gsap.fromTo(el, {
-        x: 100,
-      }, {
-        x: 0,
-        scrollTrigger: {
-          containerAnimation: this.containerScroll,
-          trigger: el,
-          start: '-30% 80%',
-          end: 'center 20%',
-          scrub: true,
+    const projects = document.querySelectorAll(".project");
+    projects.forEach((el) => {
+      gsap.fromTo(
+        el,
+        {
+          x: 100,
         },
-        ease: 'power3'
-      })
-    })
+        {
+          x: 0,
+          scrollTrigger: {
+            containerAnimation: this.containerScroll,
+            trigger: el,
+            start: "-50% 80%",
+            end: "center 20%",
+            scrub: true,
+          },
+          ease: "power3",
+        }
+      );
+    });
   }
 
   setHorizontalScroll() {
-    this.containerScroll =  gsap.to(this.root, {
+    this.containerScroll = gsap.to(this.root, {
       x: -(this.rootWidth - this.sizes.width),
       ease: "none",
       scrollTrigger: {
