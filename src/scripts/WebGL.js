@@ -5,7 +5,7 @@ import * as THREE from "three";
 import vertex from "../shaders/landing/vertex.glsl";
 import fragment from "../shaders/landing/fragment.glsl";
 
-export default class Experience {
+export default class WebGL {
   constructor(canvas) {
     this.canvas = canvas;
 

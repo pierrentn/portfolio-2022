@@ -2,7 +2,7 @@ import "./src/styles/style.scss";
 import gsap from "gsap";
 import ScrollTrigger from "gsap/ScrollTrigger";
 import ASScroll from "@ashthornton/asscroll";
-import Experience from "./src/scripts/Experience";
+import WebGL from "./src/scripts/WebGL";
 import Landing from "./src/scripts/views/Landing";
 import Content from "./src/scripts/views/Content";
 import ee from "./src/scripts/utils/emiter.js";
@@ -37,7 +37,7 @@ ScrollTrigger.scrollerProxy(asscroll.containerElement, {
 asscroll.on("update", ScrollTrigger.update);
 ScrollTrigger.addEventListener("refresh", asscroll.resize);
 
-new Experience(document.querySelector("canvas.webgl"));
+new WebGL(document.querySelector("canvas.webgl"));
 
 window.addEventListener("load", () => {
   ScrollTrigger.refresh();
