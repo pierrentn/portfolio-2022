@@ -2,19 +2,21 @@ import gsap from "gsap";
 import { splitLines } from "textsplitter";
 
 export default class Content {
-  constructor() {
+  constructor(scrollContainer) {
     this.root = document.querySelector(".content");
     this.fixedNav = document.querySelector(".content .fixed");
 
-    this.rootWidth = this.root.getBoundingClientRect().width;
     this.sizes = {
       height: window.innerWidth,
       width: window.innerWidth,
     };
 
     this.setHorizontalScroll();
-    this.aboutAnim();
-    this.projectsAnim();
+    setTimeout(() => {
+      this.rootWidth = this.root.getBoundingClientRect().width;
+      this.aboutAnim();
+      this.projectsAnim();
+    }, 200);
     window.addEventListener("resize", () => this.onResize());
   }
 

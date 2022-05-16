@@ -43,6 +43,6 @@ window.addEventListener("DOMContentLoaded", () => {
   ScrollTrigger.refresh();
   document.querySelector("#app").style.setProperty("visibility", "visible");
   new Landing();
-  new Content();
+  new Content(asscroll.containerElement);
 });
 ee.on("ladingFinished", () => asscroll.enable());
