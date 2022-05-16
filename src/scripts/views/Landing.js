@@ -19,7 +19,10 @@ export default class Landing {
       stagger: 0.025,
       delay: 2.5,
       ease: "power2",
-      onComplete: () => ee.emit("ladingFinished"),
+      onComplete: () => {
+        console.log("scroll can start");
+        ee.emit("ladingFinished");
+      },
     });
   }
 }

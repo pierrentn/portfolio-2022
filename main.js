@@ -12,37 +12,37 @@ const asscroll = new ASScroll({
   disableRaf: true,
 });
 
+gsap.ticker.add(asscroll.update);
+
+ScrollTrigger.defaults({
+  scroller: asscroll.containerElement,
+});
+
+ScrollTrigger.scrollerProxy(asscroll.containerElement, {
+  scrollTop(value) {
+    return arguments.length
+      ? (asscroll.currentPos = value)
+      : asscroll.currentPos;
+  },
+  getBoundingClientRect() {
+    return {
+      top: 0,
+      left: 0,
+      width: window.innerWidth,
+      height: window.innerHeight,
+    };
+  },
+});
+
+asscroll.on("update", ScrollTrigger.update);
+ScrollTrigger.addEventListener("refresh", asscroll.resize);
+
 new Experience(document.querySelector("canvas.webgl"));
 
 window.addEventListener("DOMContentLoaded", () => {
+  ScrollTrigger.refresh();
   document.querySelector("#app").style.setProperty("visibility", "visible");
   new Landing();
   new Content();
-
-  gsap.ticker.add(asscroll.update);
-
-  ScrollTrigger.defaults({
-    scroller: asscroll.containerElement,
-  });
-
-  ScrollTrigger.scrollerProxy(asscroll.containerElement, {
-    scrollTop(value) {
-      return arguments.length
-        ? (asscroll.currentPos = value)
-        : asscroll.currentPos;
-    },
-    getBoundingClientRect() {
-      return {
-        top: 0,
-        left: 0,
-        width: window.innerWidth,
-        height: window.innerHeight,
-      };
-    },
-  });
-
-  asscroll.on("update", ScrollTrigger.update);
-  ScrollTrigger.addEventListener("refresh", asscroll.resize);
 });
-
 ee.on("ladingFinished", () => asscroll.enable());
