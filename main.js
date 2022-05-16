@@ -5,7 +5,7 @@ import ASScroll from "@ashthornton/asscroll";
 import Experience from "./src/scripts/Experience";
 import Landing from "./src/scripts/views/Landing";
 import Content from "./src/scripts/views/Content";
-import ee from "./src/scripts/utils/emiter.js"
+import ee from "./src/scripts/utils/emiter.js";
 
 gsap.registerPlugin(ScrollTrigger);
 const asscroll = new ASScroll({
@@ -38,8 +38,9 @@ asscroll.on("update", ScrollTrigger.update);
 ScrollTrigger.addEventListener("refresh", asscroll.resize);
 
 window.addEventListener("DOMContentLoaded", () => {
+  document.querySelector("#app").style.setProperty("visibility", "visible");
   new Experience(document.querySelector("canvas.webgl"));
   new Landing();
   new Content();
 });
-ee.on('ladingFinished', () => asscroll.enable())
+ee.on("ladingFinished", () => asscroll.enable());
