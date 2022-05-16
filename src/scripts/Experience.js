@@ -1,5 +1,5 @@
 import gsap from "gsap";
-import ee from './utils/emiter.js'
+import ee from "./utils/emiter.js";
 import * as THREE from "three";
 
 import vertex from "../shaders/landing/vertex.glsl";
@@ -158,8 +158,8 @@ export default class Experience {
         // yoyo: "true",
         delay: 1.5,
         onComplete: () => {
-          ee.emit("ladingFinished")
-          this.introFinished = true
+          // ee.emit("ladingFinished");
+          this.introFinished = true;
         },
       }
     );

@@ -1,5 +1,6 @@
 import { splitLetters } from "textsplitter";
 import gsap from "gsap";
+import ee from "../utils/emiter";
 
 export default class Landing {
   constructor() {
@@ -18,6 +19,7 @@ export default class Landing {
       stagger: 0.025,
       delay: 2.5,
       ease: "power2",
+      onComplete: () => ee.emit("ladingFinished"),
     });
   }
 }
