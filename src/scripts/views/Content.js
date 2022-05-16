@@ -57,6 +57,25 @@ export default class Content {
         delay: 0.1,
       }
     );
+
+    gsap.fromTo(
+      ".contact",
+      {
+        x: -this.sizes.width,
+      },
+      {
+        x: this.rootWidth - this.sizes.width,
+        ease: "none",
+        scrollTrigger: {
+          trigger: this.root,
+          containerAnimation: this.containerScroll,
+          scrub: true,
+          // pin: true,
+          invalidateOnRefresh: true,
+          end: `+=${this.rootWidth}`,
+        },
+      }
+    );
   }
 
   projectsAnim() {
