@@ -39,7 +39,7 @@ ScrollTrigger.addEventListener("refresh", asscroll.resize);
 
 new Experience(document.querySelector("canvas.webgl"));
 
-window.addEventListener("DOMContentLoaded", () => {
+window.addEventListener("load", () => {
   ScrollTrigger.refresh();
   document.querySelector("#app").style.setProperty("visibility", "visible");
   new Landing();

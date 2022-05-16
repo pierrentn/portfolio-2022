@@ -6,17 +6,15 @@ export default class Content {
     this.root = document.querySelector(".content");
     this.fixedNav = document.querySelector(".content .fixed");
 
+    this.rootWidth = this.root.getBoundingClientRect().width;
     this.sizes = {
       height: window.innerWidth,
       width: window.innerWidth,
     };
 
     this.setHorizontalScroll();
-    setTimeout(() => {
-      this.rootWidth = this.root.getBoundingClientRect().width;
-      this.aboutAnim();
-      this.projectsAnim();
-    }, 200);
+    this.aboutAnim();
+    this.projectsAnim();
     window.addEventListener("resize", () => this.onResize());
   }
 

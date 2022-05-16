@@ -57,7 +57,7 @@ export default class Experience {
     this.loop();
 
     window.addEventListener("resize", () => this.onResize());
-    window.addEventListener("DOMContentLoaded", () => this.introAnim());
+    window.addEventListener("load", () => this.introAnim());
   }
 
   setVisibleSize() {
