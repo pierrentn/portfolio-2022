@@ -22,8 +22,8 @@ export default class Experience {
     this.clock = new THREE.Clock();
 
     this.uniforms = {
-      uProgressTrans: 1,
-      uProgressFade: 0,
+      uProgressTrans: 0.9,
+      uProgressFade: 0.999,
       uColor1: new THREE.Color("#00190a"),
       uColor2: new THREE.Color("#fefae0"),
       uColor3: new THREE.Color("#00190a"),
@@ -57,9 +57,7 @@ export default class Experience {
     this.loop();
 
     window.addEventListener("resize", () => this.onResize());
-    setTimeout(() => {
-      window.addEventListener("mousemove", (e) => this.onMouseMove(e));
-    }, 2000);
+    window.addEventListener("DOMContentLoaded", () => this.introAnim());
   }
 
   setVisibleSize() {
@@ -124,6 +122,14 @@ export default class Experience {
       transparent: true,
     });
 
+    this.cube = new THREE.Mesh(this.cubeGeo, this.cubeMat);
+    this.cube.position.set(0, 0, 0);
+
+    this.scene.add(this.cube);
+  }
+
+  introAnim() {
+    console.log("hey");
     //Scale
     gsap.fromTo(
       this.cubeMat.uniforms.uProgressTrans,
@@ -164,10 +170,9 @@ export default class Experience {
       }
     );
 
-    this.cube = new THREE.Mesh(this.cubeGeo, this.cubeMat);
-    this.cube.position.set(0, 0, 0);
-
-    this.scene.add(this.cube);
+    setTimeout(() => {
+      window.addEventListener("mousemove", (e) => this.onMouseMove(e));
+    }, 2000);
   }
 
   setRenderer() {
