@@ -37,14 +37,15 @@ ScrollTrigger.scrollerProxy(asscroll.containerElement, {
 asscroll.on("update", ScrollTrigger.update);
 ScrollTrigger.addEventListener("refresh", asscroll.resize);
 
-window.addEventListener("DOMContentLoaded", () => {
-  new WebGL(document.querySelector("canvas.webgl"), asscroll);
-});
+// window.addEventListener("DOMContentLoaded", () => {
+  
+// });
 
 
 window.addEventListener("load", () => {
   ScrollTrigger.refresh();
   document.querySelector("#app").style.setProperty("visibility", "visible");
+  new WebGL(document.querySelector("canvas.webgl"), asscroll);
   new Landing();
   new Content(asscroll.containerElement);
 });
