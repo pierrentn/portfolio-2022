@@ -141,7 +141,7 @@ export default class WebGL {
     const { top, left, width, height } =
       this.landingContainer.getBoundingClientRect();
       console.log(width, height);
-    this.landingPlaneGeo = new THREE.PlaneGeometry(width, height);
+    this.landingPlaneGeo = new THREE.PlaneGeometry(width, height || this.sizes.height);
 
     this.landingPlaneMat = new THREE.ShaderMaterial({
       fragmentShader: landingFragment,
