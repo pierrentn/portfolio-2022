@@ -32,9 +32,14 @@ export default class WebGL {
       height: window.innerHeight + 1,
     };
 
-    this.mousePos = {
-      x: 0.5,
-      y: 0.5,
+    this.delayedMouse = {
+      x: 0,
+      y: 0,
+    };
+
+    this.mouse = {
+      x: 0,
+      y: 0,
     };
 
     this.clock = new THREE.Clock();
@@ -70,8 +75,8 @@ export default class WebGL {
 
     this.setScene();
     this.setCamera();
-    this.setVisibleSize();
     // this.setControls();
+    this.setRayCaster();
     this.setBackgroundPlane();
     this.setLandingPlane();
     this.setRenderer();
@@ -88,17 +93,6 @@ export default class WebGL {
       this.setLandingPlanePosition();
       if (this.pageLoaded) this.setImagesPositions();
     });
-  }
-
-  setVisibleSize() {
-    this.visibleSize = {};
-
-    let depth = 0;
-    depth -= this.camera.position.z;
-    const vFOV = (this.camera.fov * Math.PI) / 180;
-
-    this.visibleSize.height = 2 * Math.tan(vFOV / 2) * Math.abs(depth);
-    this.visibleSize.width = this.visibleSize.height * this.camera.aspect;
   }
 
   setScene() {
@@ -164,12 +158,15 @@ export default class WebGL {
         uWhiteWidth: { value: this.uniforms.uWhiteWidth },
         uWhiteFade: { value: this.uniforms.uWhiteFade },
         uGridProgress: { value: this.uniforms.uGridProgress },
-        uMouse: { value: this.mousePos },
+        uMouse: { value: this.delayedMouse },
       },
       transparent: true,
     });
 
-    this.landingPlane = new THREE.Mesh(this.landingPlaneGeo, this.landingPlaneMat);
+    this.landingPlane = new THREE.Mesh(
+      this.landingPlaneGeo,
+      this.landingPlaneMat
+    );
     // this.landingPlane.position.set(0, 0, -1);
 
     this.landingPlane.position.x = left - this.sizes.width / 2 + width / 2;
@@ -181,7 +178,7 @@ export default class WebGL {
 
   setLandingPlanePosition() {
     const { top, left, width, height } =
-    this.landingContainer.getBoundingClientRect();
+      this.landingContainer.getBoundingClientRect();
     this.landingPlane.position.x = left - this.sizes.width / 2 + width / 2;
 
     this.landingPlane.position.y = -top + this.sizes.height / 2 - height / 2;
@@ -198,6 +195,11 @@ export default class WebGL {
         uniforms: {
           uTime: { value: 0 },
           uTexture: { value: new THREE.TextureLoader().load(el.src) },
+          uMouseUv: { value: new THREE.Vector2(0, 0) },
+          uRez: {
+            value: new THREE.Vector2(this.sizes.width, this.sizes.height),
+          },
+          uProgress: { value: 0 },
         },
       });
       const mesh = new THREE.Mesh(geometry, material);
@@ -297,19 +299,66 @@ export default class WebGL {
   }
 
   onMouseMove(e) {
-    gsap.to(this.mousePos, {
-      x: e.clientX / this.sizes.width,
-      y: 0.4 + (e.clientY / this.sizes.height) * 0.2,
+    gsap.to(this.delayedMouse, {
+      x: (e.clientX / this.sizes.width) * 2 - 1,
+      y: -(e.clientY / this.sizes.height) * 2 + 1,
       duration: 4.5,
       ease: "power4",
     });
+
+    this.mouse = {
+      x: (e.clientX / this.sizes.width) * 2 - 1,
+      y: -(e.clientY / this.sizes.height) * 2 + 1,
+    };
+  }
+
+  setRayCaster() {
+    this.raycaster = new THREE.Raycaster();
+  }
+
+  castRay() {
+    if (!this.imagesStore) return;
+
+    this.raycaster.setFromCamera(this.mouse, this.camera);
+
+    const objectsToTest = this.imagesStore.map((i) => i.mesh);
+    const intersects = this.raycaster.intersectObjects(objectsToTest);
+
+    for (const intersect of intersects) {
+      intersect.object.material.uniforms.uMouseUv.value = intersect.uv;
+      gsap.to(intersect.object.material.uniforms.uProgress, {
+        value: 1,
+        duration: 2,
+      });
+    }
+
+    for (const object of objectsToTest) {
+      if (!intersects.find((intersect) => intersect.object === object)) {
+        gsap.to(object.material.uniforms.uProgress, {
+          value: 0,
+          duration: 2.5,
+          ease: "power4",
+        });
+      }
+    }
   }
 
   loop() {
     this.elapsed = this.clock.getElapsedTime();
 
-    if (this.landingPlaneMat) this.landingPlaneMat.uniforms.uTime.value = this.elapsed;
+    this.castRay();
+
+    if (this.landingPlaneMat)
+      this.landingPlaneMat.uniforms.uTime.value = this.elapsed;
     this.postProcess.noiseShader.uniforms.uTime.value = this.elapsed * 0.00005;
+
+    if (this.imagesStore) {
+      this.imagesStore
+        .map((i) => i.mesh)
+        .forEach((image) => {
+          image.material.uniforms.uTime.value = this.elapsed;
+        });
+    }
 
     if (this.controls) this.controls.update();
 

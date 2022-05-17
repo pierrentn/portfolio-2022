@@ -42,7 +42,7 @@ void main () {
   // uv = rotate2d((PI * 1.) * uProgressTrans) * uv;
   uv += 0.5;
 
-  float limitPos = 1. - uMouse.y;
+  float limitPos = 1. - (0.5 - uMouse.y * 0.1);
   float centerY = length(uv.y - limitPos);
   float centerX = length(uv.x - 0.5);
 
