@@ -1,4 +1,5 @@
 import gsap from "gsap";
+import ScrollTrigger from "gsap/ScrollTrigger";
 import ee from "./utils/emiter.js";
 import { EffectComposer } from "three/examples/jsm/postprocessing/EffectComposer.js";
 import { ShaderPass } from "three/examples/jsm/postprocessing/ShaderPass.js";
@@ -11,9 +12,20 @@ import landingFragment from "../shaders/landing/fragment.glsl";
 import noiseVertex from "../shaders/noise/vertex.glsl";
 import noiseFragment from "../shaders/noise/fragment.glsl";
 
+import projectVertex from "../shaders/project/vertex.glsl";
+import projectFragment from "../shaders/project/fragment.glsl";
+
 export default class WebGL {
-  constructor(canvas) {
+  constructor(canvas, asscroll) {
     this.canvas = canvas;
+    this.scroller = asscroll;
+
+    this.contentContainer = document.querySelector(".content");
+    this.contentContainerWidth =
+      this.contentContainer.getBoundingClientRect().width;
+
+    this.landingContainer = document.querySelector(".webgl-el.landing");
+    this.images = document.querySelectorAll(".webgl-el.img");
 
     this.sizes = {
       width: window.innerWidth + 1,
@@ -31,9 +43,11 @@ export default class WebGL {
       uProgressTrans: 0.9,
       uProgressFade: 0.999,
       uColor1: new THREE.Color("#00190a"),
-      uColor2: new THREE.Color("#fefae0"),
+      // uColor2: new THREE.Color("#aca577"),
+      uColor2: new THREE.Color("#ded7ab"),
       uColor3: new THREE.Color("#00190a"),
-      uColor4: new THREE.Color("#fefae0"),
+      // uColor4: new THREE.Color("#aca577"),
+      uColor4: new THREE.Color("#ded7ab"),
 
       // uColor1: new THREE.Color("rgb(41, 112, 205)"),
       // uColor2: new THREE.Color("rgb(237, 174, 200)"),
@@ -58,13 +72,22 @@ export default class WebGL {
     this.setCamera();
     this.setVisibleSize();
     // this.setControls();
-    this.setObjects();
+    this.setBackgroundPlane();
+    this.setLandingPlane();
     this.setRenderer();
     this.setPostProcessing();
     this.loop();
 
     window.addEventListener("resize", () => this.onResize());
-    window.addEventListener("load", () => this.introAnim());
+    window.addEventListener("load", () => {
+      this.pageLoaded = true;
+      this.introAnim();
+      this.setImages();
+    });
+    this.scroller.on("update", (scrollPos) => {
+      this.setLandingPlanePosition();
+      if (this.pageLoaded) this.setImagesPositions();
+    });
   }
 
   setVisibleSize() {
@@ -105,13 +128,27 @@ export default class WebGL {
     this.controls.enableDamping = true;
   }
 
-  setObjects() {
-    this.planeGeo = new THREE.PlaneGeometry(
-      this.sizes.width,
-      this.sizes.height
+  setBackgroundPlane() {
+    this.backgroundPlaneGeo = new THREE.PlaneGeometry(
+      this.sizes.width * 1.5,
+      this.sizes.height * 1.5
     );
+    this.backgroundPlaneMat = new THREE.MeshBasicMaterial({
+      color: this.uniforms.uColor2,
+    });
+    this.backgroundPlane = new THREE.Mesh(
+      this.backgroundPlaneGeo,
+      this.backgroundPlaneMat
+    );
+    this.scene.add(this.backgroundPlane);
+  }
 
-    this.planeMat = new THREE.ShaderMaterial({
+  setLandingPlane() {
+    const { top, left, width, height } =
+      this.landingContainer.getBoundingClientRect();
+    this.landingPlaneGeo = new THREE.PlaneGeometry(width, height);
+
+    this.landingPlaneMat = new THREE.ShaderMaterial({
       fragmentShader: landingFragment,
       vertexShader: landingVertex,
       uniforms: {
@@ -132,16 +169,64 @@ export default class WebGL {
       transparent: true,
     });
 
-    this.plane = new THREE.Mesh(this.planeGeo, this.planeMat);
-    this.plane.position.set(0, 0, 0);
+    this.landingPlane = new THREE.Mesh(this.landingPlaneGeo, this.landingPlaneMat);
+    // this.landingPlane.position.set(0, 0, -1);
 
-    this.scene.add(this.plane);
+    this.landingPlane.position.x = left - this.sizes.width / 2 + width / 2;
+
+    this.landingPlane.position.y = -top + this.sizes.height / 2 - height / 2;
+
+    this.scene.add(this.landingPlane);
+  }
+
+  setLandingPlanePosition() {
+    const { top, left, width, height } =
+    this.landingContainer.getBoundingClientRect();
+    this.landingPlane.position.x = left - this.sizes.width / 2 + width / 2;
+
+    this.landingPlane.position.y = -top + this.sizes.height / 2 - height / 2;
+  }
+
+  setImages() {
+    this.imagesStore = [...this.images].map((el, i) => {
+      const bounds = el.getBoundingClientRect();
+
+      const geometry = new THREE.PlaneGeometry(bounds.width, bounds.height);
+      const material = new THREE.ShaderMaterial({
+        fragmentShader: projectFragment,
+        vertexShader: projectVertex,
+        uniforms: {
+          uTime: { value: 0 },
+          uTexture: { value: new THREE.TextureLoader().load(el.src) },
+        },
+      });
+      const mesh = new THREE.Mesh(geometry, material);
+      mesh.position.x = bounds.left - this.sizes.width / 2 + bounds.width / 2;
+      mesh.position.y = -bounds.top + this.sizes.height / 2 - bounds.height / 2;
+
+      this.scene.add(mesh);
+
+      return {
+        el,
+        mesh,
+      };
+    });
+  }
+
+  setImagesPositions() {
+    this.imagesStore.forEach((img, i) => {
+      const { top, left, width, height } = img.el.getBoundingClientRect();
+      // if (i == 0) console.log(left - this.sizes.width / 2 + width / 2);
+      img.mesh.position.x = left - this.sizes.width / 2 + width / 2;
+      img.mesh.position.y = -top + this.sizes.height / 2 - height / 2;
+    });
   }
 
   introAnim() {
+    if (!this.landingPlaneMat) return;
     //Scale
     gsap.fromTo(
-      this.planeMat.uniforms.uProgressTrans,
+      this.landingPlaneMat.uniforms.uProgressTrans,
       {
         value: 0.9,
       },
@@ -150,16 +235,13 @@ export default class WebGL {
         duration: 2,
         ease: "power1.out",
         yoyoEase: "power4.out",
-        // repeat: -1,
-        // repeatDelay: 1.5,
-        // yoyo: "true",
         delay: 1,
       }
     );
 
     //FadeIn
     gsap.fromTo(
-      this.planeMat.uniforms.uProgressFade,
+      this.landingPlaneMat.uniforms.uProgressFade,
       {
         value: 0.999,
       },
@@ -168,9 +250,6 @@ export default class WebGL {
         duration: 2.4,
         ease: "power2.inOut",
         yoyoEase: "power4.out",
-        // repeat: -1,
-        // repeatDelay: 1.5,
-        // yoyo: "true",
         delay: 1.5,
         onComplete: () => {
           this.introFinished = true;
@@ -186,6 +265,7 @@ export default class WebGL {
   setRenderer() {
     this.renderer = new THREE.WebGLRenderer({
       canvas: this.canvas,
+      alpha: true,
     });
     this.renderer.setSize(this.sizes.width, this.sizes.height);
     this.renderer.setPixelRatio(Math.min(2, window.devicePixelRatio));
@@ -228,12 +308,12 @@ export default class WebGL {
   loop() {
     this.elapsed = this.clock.getElapsedTime();
 
-    this.planeMat.uniforms.uTime.value = this.elapsed;
-    this.postProcess.noiseShader.uniforms.uTime.value = this.elapsed;
-    
+    if (this.landingPlaneMat) this.landingPlaneMat.uniforms.uTime.value = this.elapsed;
+    this.postProcess.noiseShader.uniforms.uTime.value = this.elapsed * 0.00005;
+
     if (this.controls) this.controls.update();
 
-    // this.renderer  .render(this.scene, this.camera);
+    // this.renderer.render(this.scene, this.camera);
     this.postProcess.composer.render(this.scene, this.camera);
 
     window.requestAnimationFrame(() => this.loop());

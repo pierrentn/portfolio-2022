@@ -1,4 +1,5 @@
 import gsap from "gsap";
+import ScrollTrigger from "gsap/ScrollTrigger";
 import { splitLines } from "textsplitter";
 
 export default class Content {
@@ -32,7 +33,6 @@ export default class Content {
         alpha: 1,
         y: 0,
         scrollTrigger: {
-          // containerAnimation: this.containerScroll,
           trigger: ".split-lines-about",
         },
         stagger: 0.05,
@@ -50,7 +50,6 @@ export default class Content {
         alpha: 1,
         y: 0,
         scrollTrigger: {
-          // containerAnimation: this.containerScroll,
           trigger: ".contact a",
         },
         stagger: 0.05,
@@ -105,13 +104,16 @@ export default class Content {
     this.containerScroll = gsap.to(this.root, {
       x: -(this.rootWidth - this.sizes.width),
       ease: "none",
-      scrollTrigger: {
-        trigger: this.root,
-        scrub: true,
-        pin: true,
-        invalidateOnRefresh: true,
-        end: `+=${this.rootWidth}`,
-      },
+    });
+
+    const scrollTriggerInstance = ScrollTrigger.create({
+      id: "contentScroller",
+      animation: this.containerScroll,
+      trigger: this.root,
+      scrub: true,
+      pin: true,
+      invalidateOnRefresh: true,
+      end: `+=${this.rootWidth}`,
     });
   }
 

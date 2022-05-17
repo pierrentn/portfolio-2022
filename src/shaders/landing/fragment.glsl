@@ -82,5 +82,5 @@ void main () {
 
   // gl_FragColor = vec4(vec3(c + whiteNoise), (1.0 - uProgressFade + 0.2));
     // gl_FragColor = vec4(vec3(c + whiteNoise), 1.0);
-    gl_FragColor = vec4(vec3(c), 1.0);
+    gl_FragColor = vec4(vec3(c + 0.05), 1.0);
 }

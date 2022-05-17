@@ -1,8 +1,9 @@
-lockfileVersion: 5.3
+lockfileVersion: 5.4
 
 specifiers:
   '@ashthornton/asscroll': ^2.0.7
   events: ^3.3.0
+  glsl-blend-soft-light: ^1.0.5
   gsap: ^3.10.4
   sass: ^1.51.0
   textsplitter: ^2.0.1
@@ -13,6 +14,7 @@ specifiers:
 dependencies:
   '@ashthornton/asscroll': 2.0.7
   events: 3.3.0
+  glsl-blend-soft-light: 1.0.5
   gsap: 3.10.4
   textsplitter: 2.0.1
   three: 0.140.2
@@ -321,6 +323,10 @@ packages:
     dependencies:
       is-glob: 4.0.3
     dev: true
+
+  /glsl-blend-soft-light/1.0.5:
+    resolution: {integrity: sha1-9TBsYiWZ7o56T7JIeVQ0iTzWwls=}
+    dev: false
 
   /gsap/3.10.4:
     resolution: {integrity: sha512-6QatdkKxXCMfvCW4rM++0RqyLQAzFX5nwl3yHS0XPgkZBkiSEY3VZVbMltrdtsbER/xZonLtyHt684wRp4erlQ==}
