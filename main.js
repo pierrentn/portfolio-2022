@@ -37,7 +37,10 @@ ScrollTrigger.scrollerProxy(asscroll.containerElement, {
 asscroll.on("update", ScrollTrigger.update);
 ScrollTrigger.addEventListener("refresh", asscroll.resize);
 
-new WebGL(document.querySelector("canvas.webgl"), asscroll);
+window.addEventListener("DOMContentLoaded", () => {
+  new WebGL(document.querySelector("canvas.webgl"), asscroll);
+});
+
 
 window.addEventListener("load", () => {
   ScrollTrigger.refresh();
