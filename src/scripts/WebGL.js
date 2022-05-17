@@ -1,9 +1,15 @@
 import gsap from "gsap";
 import ee from "./utils/emiter.js";
+import { EffectComposer } from "three/examples/jsm/postprocessing/EffectComposer.js";
+import { ShaderPass } from "three/examples/jsm/postprocessing/ShaderPass.js";
+import { RenderPass } from "three/examples/jsm/postprocessing/RenderPass.js";
 import * as THREE from "three";
 
-import vertex from "../shaders/landing/vertex.glsl";
-import fragment from "../shaders/landing/fragment.glsl";
+import landingVertex from "../shaders/landing/vertex.glsl";
+import landingFragment from "../shaders/landing/fragment.glsl";
+
+import noiseVertex from "../shaders/noise/vertex.glsl";
+import noiseFragment from "../shaders/noise/fragment.glsl";
 
 export default class WebGL {
   constructor(canvas) {
@@ -54,6 +60,7 @@ export default class WebGL {
     // this.setControls();
     this.setObjects();
     this.setRenderer();
+    this.setPostProcessing();
     this.loop();
 
     window.addEventListener("resize", () => this.onResize());
@@ -76,13 +83,20 @@ export default class WebGL {
   }
 
   setCamera() {
+    this.cameraDistance = 600;
+    const cameraFov =
+      2 *
+      Math.atan(this.sizes.height / 2 / this.cameraDistance) *
+      (180 / Math.PI);
+
     this.camera = new THREE.PerspectiveCamera(
-      70,
+      cameraFov,
       this.sizes.width / this.sizes.height,
-      0.01,
-      1000
+      200,
+      1500
     );
-    this.camera.position.set(0, 0, 2);
+
+    this.camera.position.set(0, 0, this.cameraDistance);
     this.scene.add(this.camera);
   }
 
@@ -93,13 +107,13 @@ export default class WebGL {
 
   setObjects() {
     this.planeGeo = new THREE.PlaneGeometry(
-      this.visibleSize.width,
-      this.visibleSize.height
+      this.sizes.width,
+      this.sizes.height
     );
 
     this.planeMat = new THREE.ShaderMaterial({
-      fragmentShader: fragment,
-      vertexShader: vertex,
+      fragmentShader: landingFragment,
+      vertexShader: landingVertex,
       uniforms: {
         uTime: { value: 0 },
         uColor2: { value: this.uniforms.uColor2 },
@@ -177,25 +191,50 @@ export default class WebGL {
     this.renderer.setPixelRatio(Math.min(2, window.devicePixelRatio));
   }
 
+  setPostProcessing() {
+    this.postProcess = {};
+
+    this.postProcess.renderPass = new RenderPass(this.scene, this.camera);
+
+    this.noiseShader = {
+      uniforms: {
+        tDiffuse: { value: null },
+        uTime: { value: 0 },
+      },
+      fragmentShader: noiseFragment,
+      vertexShader: noiseVertex,
+    };
+
+    this.postProcess.noiseShader = new ShaderPass(this.noiseShader);
+
+    this.postProcess.composer = new EffectComposer(this.renderer);
+    this.postProcess.composer.addPass(this.postProcess.renderPass);
+    this.postProcess.composer.addPass(this.postProcess.noiseShader);
+    this.postProcess.composer.setSize(this.sizes.width, this.sizes.height);
+    this.postProcess.composer.setPixelRatio(
+      Math.min(window.devicePixelRatio, 2)
+    );
+  }
+
   onMouseMove(e) {
-    // if (this.introFinished) {
     gsap.to(this.mousePos, {
       x: e.clientX / this.sizes.width,
       y: 0.4 + (e.clientY / this.sizes.height) * 0.2,
       duration: 4.5,
       ease: "power4",
     });
-    // }
   }
 
   loop() {
     this.elapsed = this.clock.getElapsedTime();
 
     this.planeMat.uniforms.uTime.value = this.elapsed;
-
+    this.postProcess.noiseShader.uniforms.uTime.value = this.elapsed;
+    
     if (this.controls) this.controls.update();
 
-    this.renderer.render(this.scene, this.camera);
+    // this.renderer  .render(this.scene, this.camera);
+    this.postProcess.composer.render(this.scene, this.camera);
 
     window.requestAnimationFrame(() => this.loop());
   }
@@ -208,11 +247,20 @@ export default class WebGL {
     };
 
     //Update Camera
+    const cameraFov =
+      2 *
+      Math.atan(this.sizes.height / 2 / this.cameraDistance) *
+      (180 / Math.PI);
+    this.camera.fov = cameraFov;
     this.camera.aspect = this.sizes.width / this.sizes.height;
     this.camera.updateProjectionMatrix();
 
     //Update Renderer
     this.renderer.setSize(this.sizes.width, this.sizes.height);
     this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    this.postProcess.composer.setSize(this.sizes.width, this.sizes.height);
+    this.postProcess.composer.setPixelRatio(
+      Math.min(window.devicePixelRatio, 2)
+    );
   }
 }
