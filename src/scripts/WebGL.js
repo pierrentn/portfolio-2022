@@ -84,11 +84,11 @@ export default class WebGL {
     this.loop();
 
     window.addEventListener("resize", () => this.onResize());
-    window.addEventListener("load", () => {
+    // window.addEventListener("load", () => {
       this.pageLoaded = true;
       this.introAnim();
       this.setImages();
-    });
+    // });
     this.scroller.on("update", (scrollPos) => {
       this.setLandingPlanePosition();
       if (this.pageLoaded) this.setImagesPositions();
@@ -140,7 +140,6 @@ export default class WebGL {
   setLandingPlane() {
     const { top, left, width, height } =
       this.landingContainer.getBoundingClientRect();
-      console.log(width, height);
     this.landingPlaneGeo = new THREE.PlaneGeometry(width, height);
 
     this.landingPlaneMat = new THREE.ShaderMaterial({
