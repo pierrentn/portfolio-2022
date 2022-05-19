@@ -85,9 +85,9 @@ export default class WebGL {
 
     window.addEventListener("resize", () => this.onResize());
     // window.addEventListener("load", () => {
-      this.pageLoaded = true;
-      this.introAnim();
-      this.setImages();
+    this.pageLoaded = true;
+    this.introAnim();
+    this.setImages();
     // });
     this.scroller.on("update", (scrollPos) => {
       this.setLandingPlanePosition();
@@ -199,6 +199,7 @@ export default class WebGL {
           uRez: {
             value: new THREE.Vector2(this.sizes.width, this.sizes.height),
           },
+          uColor: { value: this.uniforms.uColor2 },
           uProgress: { value: 0 },
         },
       });
