@@ -4,6 +4,8 @@ import { splitLines } from "textsplitter";
 
 export default class Content {
   constructor(scrollContainer) {
+    this.isMobile = window.innerWidth <= 1024;
+
     this.root = document.querySelector(".content");
     this.fixedNav = document.querySelector(".content .fixed");
 
@@ -13,8 +15,8 @@ export default class Content {
       width: window.innerWidth,
     };
 
-    this.setHorizontalScroll();
-    this.aboutAnim();
+    if (!this.isMobile) this.setHorizontalScroll();
+    if (!this.isMobile) this.aboutAnim();
     this.projectsAnim();
     window.addEventListener("resize", () => this.onResize());
   }
@@ -71,7 +73,7 @@ export default class Content {
           scrub: true,
           // pin: true,
           invalidateOnRefresh: true,
-          end: `+=${this.rootWidth}`,
+          end: () => `+=${this.rootWidth}`,
         },
       }
     );
@@ -83,10 +85,12 @@ export default class Content {
       gsap.fromTo(
         el,
         {
-          x: 100,
+          x: !this.isMobile ? 100 : 0,
+          y: this.isMobile ? 100 : 0,
         },
         {
           x: 0,
+          y: 0,
           scrollTrigger: {
             containerAnimation: this.containerScroll,
             trigger: el,
@@ -113,7 +117,7 @@ export default class Content {
       scrub: true,
       pin: true,
       invalidateOnRefresh: true,
-      end: `+=${this.rootWidth}`,
+      end: () => `+=${this.rootWidth}`,
     });
   }
 
@@ -123,5 +127,6 @@ export default class Content {
       height: window.innerWidth,
       width: window.innerWidth,
     };
+    ScrollTrigger.refresh();
   }
 }
