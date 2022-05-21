@@ -26,6 +26,7 @@ export default class WebGL {
 
     this.landingContainer = document.querySelector(".webgl-el.landing");
     this.images = document.querySelectorAll(".webgl-el.img");
+    this.projectLinks = document.querySelectorAll(".project a");
 
     this.sizes = {
       width: window.innerWidth + 1,
@@ -75,7 +76,6 @@ export default class WebGL {
 
     this.setScene();
     this.setCamera();
-    // this.setControls();
     this.setRayCaster();
     this.setBackgroundPlane();
     this.setLandingPlane();
@@ -88,6 +88,7 @@ export default class WebGL {
     this.pageLoaded = true;
     this.introAnim();
     this.setImages();
+    this.projectsLinkHover();
     // });
     this.scroller.on("update", (scrollPos) => {
       this.setLandingPlanePosition();
@@ -115,11 +116,6 @@ export default class WebGL {
 
     this.camera.position.set(0, 0, this.cameraDistance);
     this.scene.add(this.camera);
-  }
-
-  setControls() {
-    this.controls = new OrbitControls(this.camera, this.canvas);
-    this.controls.enableDamping = true;
   }
 
   setBackgroundPlane() {
@@ -184,6 +180,19 @@ export default class WebGL {
     this.landingPlane.position.y = -top + this.sizes.height / 2 - height / 2;
   }
 
+  projectsLinkHover() {
+    this.imagesStore
+      .map((i) => i.elLink)
+      .forEach((el, i) => {
+        el.addEventListener("mouseenter", () => {
+          this.projectHoverOn(this.imagesStore[i].mesh);
+        });
+        el.addEventListener("mouseleave", () => {
+          this.projectHoverOut(this.imagesStore[i].mesh);
+        });
+      });
+  }
+
   setImages() {
     this.imagesStore = [...this.images].map((el, i) => {
       const bounds = el.getBoundingClientRect();
@@ -211,9 +220,37 @@ export default class WebGL {
 
       return {
         el,
+        elLink: this.projectLinks[i],
         mesh,
+        hadRayOn: false,
       };
     });
+  }
+
+  projectHoverOn(target, ref) {
+    this.projectHoverOnRef = gsap.to(target.material.uniforms.uProgress, {
+      value: 1,
+      duration: 1,
+      paused: true,
+    });
+    if (!this.projectHoverOnRef.isActive()) {
+      if (ref) ref.elLink.classList.add("hovered");
+      // else if (!this.projectHoverOutRef.isActive())
+      //   target.material.uniforms.uMouseUv.value = new THREE.Vector2(0, 1);
+      this.projectHoverOnRef.play();
+    }
+  }
+  projectHoverOut(target, ref) {
+    this.projectHoverOutRef = gsap.to(target.material.uniforms.uProgress, {
+      value: 0,
+      duration: 1.5,
+      ease: "power4",
+      paused: true,
+    });
+    if (!this.projectHoverOutRef.isActive()) {
+      if (ref) ref.elLink.classList.remove("hovered");
+      this.projectHoverOutRef.play();
+    }
   }
 
   setImagesPositions() {
@@ -325,23 +362,28 @@ export default class WebGL {
     const objectsToTest = this.imagesStore.map((i) => i.mesh);
     const intersects = this.raycaster.intersectObjects(objectsToTest);
 
+    //Check target meshes
     for (const intersect of intersects) {
+      let storeRef;
+      //find target in store to
+      for (const image of this.imagesStore) {
+        if (image.mesh == intersect.object) {
+          image.hadRayOn = true;
+          storeRef = image;
+        }
+      }
       intersect.object.material.uniforms.uMouseUv.value = intersect.uv;
-      gsap.to(intersect.object.material.uniforms.uProgress, {
-        value: 1,
-        duration: 2,
-      });
+      this.projectHoverOn(intersect.object, storeRef);
     }
 
-    for (const object of objectsToTest) {
+    objectsToTest.forEach((object, i) => {
       if (!intersects.find((intersect) => intersect.object === object)) {
-        gsap.to(object.material.uniforms.uProgress, {
-          value: 0,
-          duration: 2.5,
-          ease: "power4",
-        });
+        if (this.imagesStore[i].hadRayOn) {
+          this.projectHoverOut(object, this.imagesStore[i]);
+          this.imagesStore[i].hadRayOn = false;
+        }
       }
-    }
+    });
   }
 
   loop() {
@@ -360,8 +402,6 @@ export default class WebGL {
           image.material.uniforms.uTime.value = this.elapsed;
         });
     }
-
-    if (this.controls) this.controls.update();
 
     // this.renderer.render(this.scene, this.camera);
     this.postProcess.composer.render(this.scene, this.camera);
