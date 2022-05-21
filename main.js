@@ -10,6 +10,8 @@ import ee from "./src/scripts/utils/emiter.js";
 gsap.registerPlugin(ScrollTrigger);
 const asscroll = new ASScroll({
   disableRaf: true,
+  touchScrollType: "transform",
+  // disableResize: true,
 });
 
 gsap.ticker.add(asscroll.update);
