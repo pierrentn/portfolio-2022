@@ -81,7 +81,8 @@ export default class WebGL {
     this.setLandingPlane();
     this.setRenderer();
     this.setPostProcessing();
-    this.loop();
+    gsap.ticker.add(() => this.loop());
+    // this.loop();
 
     window.addEventListener("resize", () => this.onResize());
     // window.addEventListener("load", () => {
@@ -136,7 +137,7 @@ export default class WebGL {
   setLandingPlane() {
     const { top, left, width, height } =
       this.landingContainer.getBoundingClientRect();
-    this.landingPlaneGeo = new THREE.PlaneGeometry(width, height);
+    this.landingPlaneGeo = new THREE.PlaneGeometry(1, 1);
 
     this.landingPlaneMat = new THREE.ShaderMaterial({
       fragmentShader: landingFragment,
@@ -166,8 +167,8 @@ export default class WebGL {
     // this.landingPlane.position.set(0, 0, -1);
 
     this.landingPlane.position.x = left - this.sizes.width / 2 + width / 2;
-
     this.landingPlane.position.y = -top + this.sizes.height / 2 - height / 2;
+    this.landingPlane.scale.set(width, height, 1);
 
     this.scene.add(this.landingPlane);
   }
@@ -178,6 +179,7 @@ export default class WebGL {
     this.landingPlane.position.x = left - this.sizes.width / 2 + width / 2;
 
     this.landingPlane.position.y = -top + this.sizes.height / 2 - height / 2;
+    this.landingPlane.scale.set(width, height, 1);
   }
 
   projectsLinkHover() {
@@ -197,7 +199,7 @@ export default class WebGL {
     this.imagesStore = [...this.images].map((el, i) => {
       const bounds = el.getBoundingClientRect();
 
-      const geometry = new THREE.PlaneGeometry(bounds.width, bounds.height);
+      const geometry = new THREE.PlaneGeometry(1, 1);
       const material = new THREE.ShaderMaterial({
         fragmentShader: projectFragment,
         vertexShader: projectVertex,
@@ -213,6 +215,7 @@ export default class WebGL {
         },
       });
       const mesh = new THREE.Mesh(geometry, material);
+      mesh.scale.set(bounds.width, bounds.height, 1);
       mesh.position.x = bounds.left - this.sizes.width / 2 + bounds.width / 2;
       mesh.position.y = -bounds.top + this.sizes.height / 2 - bounds.height / 2;
 
@@ -223,6 +226,7 @@ export default class WebGL {
         elLink: this.projectLinks[i],
         mesh,
         hadRayOn: false,
+        bounds,
       };
     });
   }
@@ -255,10 +259,14 @@ export default class WebGL {
 
   setImagesPositions() {
     this.imagesStore.forEach((img, i) => {
-      const { top, left, width, height } = img.el.getBoundingClientRect();
+      const bounds = img.el.getBoundingClientRect();
       // if (i == 0) console.log(left - this.sizes.width / 2 + width / 2);
-      img.mesh.position.x = left - this.sizes.width / 2 + width / 2;
-      img.mesh.position.y = -top + this.sizes.height / 2 - height / 2;
+      img.mesh.position.x =
+        bounds.left - this.sizes.width / 2 + bounds.width / 2;
+      img.mesh.position.y =
+        -bounds.top + this.sizes.height / 2 - bounds.height / 2;
+
+      img.bounds = bounds;
     });
   }
 
@@ -406,7 +414,7 @@ export default class WebGL {
     // this.renderer.render(this.scene, this.camera);
     this.postProcess.composer.render(this.scene, this.camera);
 
-    window.requestAnimationFrame(() => this.loop());
+    // window.requestAnimationFrame(() => this.loop());
   }
 
   onResize() {
@@ -424,6 +432,16 @@ export default class WebGL {
     this.camera.fov = cameraFov;
     this.camera.aspect = this.sizes.width / this.sizes.height;
     this.camera.updateProjectionMatrix();
+    // this.scroller.resize({
+    //   width: this.sizes.width,
+    //   height: this.sizes.height,
+    // });
+
+    //Update meshes size
+    for (const img of this.imagesStore) {
+      const { mesh, bounds } = img;
+      mesh.scale.set(bounds.width, bounds.height, 1);
+    }
 
     //Update Renderer
     this.renderer.setSize(this.sizes.width, this.sizes.height);
