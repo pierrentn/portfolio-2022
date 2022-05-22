@@ -7,6 +7,11 @@ import Landing from "./src/scripts/views/Landing";
 import Content from "./src/scripts/views/Content";
 import ee from "./src/scripts/utils/emiter.js";
 
+document.documentElement.style.setProperty(
+  `--screen-height`,
+  `${window.innerHeight}px`
+);
+
 gsap.registerPlugin(ScrollTrigger);
 const asscroll = new ASScroll({
   disableRaf: true,

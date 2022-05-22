@@ -80,7 +80,7 @@ canvas.webgl {
   top: 0;
   left: 0;
   width: 100vw;
-  height: 100vh;
+  height: var(--screen-height);
   z-index: -1;
   // opacity: 0.5;
 }
@@ -92,7 +92,7 @@ canvas.webgl {
 section {
   position: relative;
   width: 100vw;
-  height: 100vh;
+  height: var(--screen-height);
 
   &.landing {
     .webgl-el.landing {
@@ -100,7 +100,7 @@ section {
       top: 0;
       left: 0;
       width: 100vw;
-      height: 100vh;
+      height: var(--screen-height);
     }
 
     .title-wrapper {
