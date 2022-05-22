@@ -11,7 +11,6 @@ gsap.registerPlugin(ScrollTrigger);
 const asscroll = new ASScroll({
   disableRaf: true,
   touchScrollType: "transform",
-  // disableResize: true,
 });
 
 gsap.ticker.add(asscroll.update);
@@ -40,10 +39,8 @@ asscroll.on("update", ScrollTrigger.update);
 ScrollTrigger.addEventListener("refresh", asscroll.resize);
 
 // window.addEventListener("DOMContentLoaded", () => {
-  
+
 // });
-
-
 window.addEventListener("load", () => {
   ScrollTrigger.refresh();
   document.querySelector("#app").style.setProperty("visibility", "visible");
@@ -51,4 +48,6 @@ window.addEventListener("load", () => {
   new Landing();
   new Content(asscroll.containerElement);
 });
-ee.on("loadingFinished", () => asscroll.enable());
+ee.on("loadingFinished", () => {
+  asscroll.enable();
+});

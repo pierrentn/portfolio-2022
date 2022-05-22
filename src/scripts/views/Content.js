@@ -4,19 +4,11 @@ import { splitLines } from "textsplitter";
 
 export default class Content {
   constructor(scrollContainer) {
-    this.isMobile = window.innerWidth <= 1024;
-
     this.root = document.querySelector(".content");
     this.fixedNav = document.querySelector(".content .fixed");
 
-    this.rootWidth = this.root.getBoundingClientRect().width;
-    this.sizes = {
-      height: window.innerWidth,
-      width: window.innerWidth,
-    };
-
-    if (!this.isMobile) this.setHorizontalScroll();
-    if (!this.isMobile) this.aboutAnim();
+    this.setHorizontalScroll();
+    this.aboutAnim();
     this.projectsAnim();
     window.addEventListener("resize", () => this.onResize());
   }
@@ -59,24 +51,28 @@ export default class Content {
       }
     );
 
-    gsap.fromTo(
-      ".contact",
-      {
-        x: -this.sizes.width,
+    ScrollTrigger.matchMedia({
+      "(min-width: 1024px)": () => {
+        gsap.fromTo(
+          ".contact",
+          {
+            x: () => -window.innerWidth,
+          },
+          {
+            x: () =>
+              this.root.getBoundingClientRect().width - window.innerWidth,
+            ease: "none",
+            scrollTrigger: {
+              trigger: this.root,
+              containerAnimation: this.containerScroll,
+              invalidateOnRefresh: true,
+              scrub: true,
+              end: () => `+=${this.root.getBoundingClientRect().width}`,
+            },
+          }
+        );
       },
-      {
-        x: this.rootWidth - this.sizes.width,
-        ease: "none",
-        scrollTrigger: {
-          trigger: this.root,
-          containerAnimation: this.containerScroll,
-          scrub: true,
-          // pin: true,
-          invalidateOnRefresh: true,
-          end: () => `+=${this.rootWidth}`,
-        },
-      }
-    );
+    });
   }
 
   projectsAnim() {
@@ -85,8 +81,8 @@ export default class Content {
       gsap.fromTo(
         el,
         {
-          x: !this.isMobile ? 100 : 0,
-          y: this.isMobile ? 100 : 0,
+          x: () => (!(window.innerWidth <= 1024) ? 100 : 0),
+          y: () => (window.innerWidth <= 1024 ? 100 : 0),
         },
         {
           x: 0,
@@ -105,28 +101,24 @@ export default class Content {
   }
 
   setHorizontalScroll() {
-    this.containerScroll = gsap.to(this.root, {
-      x: -(this.rootWidth - this.sizes.width),
-      ease: "none",
-    });
+    ScrollTrigger.matchMedia({
+      "(min-width: 1024px)": () => {
+        this.containerScroll = gsap.to(this.root, {
+          x: () =>
+            -(this.root.getBoundingClientRect().width - window.innerWidth),
+          ease: "none",
+        });
 
-    const scrollTriggerInstance = ScrollTrigger.create({
-      id: "contentScroller",
-      animation: this.containerScroll,
-      trigger: this.root,
-      scrub: true,
-      pin: true,
-      invalidateOnRefresh: true,
-      end: () => `+=${this.rootWidth}`,
+        const scrollTriggerInstance = ScrollTrigger.create({
+          id: "contentScroller",
+          animation: this.containerScroll,
+          trigger: this.root,
+          scrub: true,
+          pin: true,
+          invalidateOnRefresh: true,
+          end: () => `+=${this.root.getBoundingClientRect().width}`,
+        });
+      },
     });
-  }
-
-  onResize() {
-    this.rootWidth = this.root.getBoundingClientRect().width;
-    this.sizes = {
-      height: window.innerWidth,
-      width: window.innerWidth,
-    };
-    ScrollTrigger.refresh();
   }
 }
