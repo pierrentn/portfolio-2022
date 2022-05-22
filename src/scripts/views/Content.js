@@ -10,7 +10,6 @@ export default class Content {
     this.setHorizontalScroll();
     this.aboutAnim();
     this.projectsAnim();
-    window.addEventListener("resize", () => this.onResize());
   }
 
   aboutAnim() {
@@ -93,6 +92,7 @@ export default class Content {
             start: "-50% 80%",
             end: "center 20%",
             scrub: true,
+            invalidateOnRefresh: true,
           },
           ease: "power3",
         }
