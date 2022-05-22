@@ -85,6 +85,10 @@ canvas.webgl {
   // opacity: 0.5;
 }
 
+#app {
+  overflow: hidden;
+}
+
 section {
   position: relative;
   width: 100vw;
@@ -116,6 +120,10 @@ section {
         color: $primary2-color;
         font-size: 7rem;
         overflow: hidden;
+        @include tablet-sm {
+          font-size: 5rem;
+        }
+
         span {
           display: inline-block;
           opacity: 0;
@@ -204,6 +212,7 @@ section {
         @include tablet {
           width: 100vw;
           margin-top: 5vh;
+          margin-bottom: 5vh;
         }
 
         h2 {
