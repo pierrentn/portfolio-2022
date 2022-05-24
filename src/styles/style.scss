@@ -183,11 +183,11 @@ section {
           }
 
           ul {
-            width: 25vw;
+            width: 19vw;
             display: flex;
             justify-content: space-between;
             @include tablet {
-              width: 40vw;
+              width: 30vw;
             }
             li {
               list-style: none;

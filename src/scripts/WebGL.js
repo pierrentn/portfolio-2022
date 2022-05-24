@@ -438,10 +438,12 @@ export default class WebGL {
     // });
 
     //Update meshes size
-    for (const img of this.imagesStore) {
-      const { mesh, bounds } = img;
-      mesh.scale.set(bounds.width, bounds.height, 1);
-    }
+    setTimeout(() => {
+      for (const img of this.imagesStore) {
+        const { mesh, bounds } = img;
+        mesh.scale.set(bounds.width, bounds.height, 1);
+      }
+    }, 100);
 
     //Update Renderer
     this.renderer.setSize(this.sizes.width, this.sizes.height);
