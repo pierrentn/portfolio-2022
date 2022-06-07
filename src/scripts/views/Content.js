@@ -5,7 +5,6 @@ import { splitLines } from "textsplitter";
 export default class Content {
   constructor(scrollContainer) {
     this.root = document.querySelector(".content");
-    this.fixedNav = document.querySelector(".content .fixed");
 
     this.setHorizontalScroll();
     this.aboutAnim();

@@ -49,8 +49,6 @@ void main () {
   float topSide = smoothstep(0., 0.0, centerY * step(limitPos, uv.y));
   float botSide = smoothstep(0., 0.0, centerY * step(uv.y, limitPos));
 
-  // float clouds = (fbm(vUv * 40. + uTime * 0.5));
-  // clouds *= 0.1 * (centerY * 0.8);
 
   float lines = mod(uv.x, 0.1) * 10.;
   float pattern = smoothstep(0.01 * (centerY ), 0.02 + uLineWidth * (centerY ), lines);
@@ -73,7 +71,7 @@ void main () {
   float whiteCenter = centerY * uWhiteWidth;
   whiteCenter = smoothstep(min((0.93 + 0.065 * uProgressFade) + offset * 0.1, 1.), 1. ,1. - whiteCenter) * 1.;
 
-  float whiteNoise = (rand(uv * 50. + mod(uTime, 5.)) * 0.2) * opening;
+  //float whiteNoise = (rand(uv * 50. + mod(uTime, 5.)) * 0.2) * opening;
 
   vec3 c = c1 + c2;
   // c = mix(c, vec3(1.), pow(whiteCenter, uWhiteFade));

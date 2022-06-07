@@ -1,6 +1,4 @@
 import gsap from "gsap";
-import ScrollTrigger from "gsap/ScrollTrigger";
-import ee from "./utils/emiter.js";
 import { EffectComposer } from "three/examples/jsm/postprocessing/EffectComposer.js";
 import { ShaderPass } from "three/examples/jsm/postprocessing/ShaderPass.js";
 import { RenderPass } from "three/examples/jsm/postprocessing/RenderPass.js";
@@ -43,6 +41,8 @@ export default class WebGL {
       y: 0,
     };
 
+    this.planeGeometry = new THREE.PlaneGeometry(1, 1);
+
     this.clock = new THREE.Clock();
 
     this.uniforms = {
@@ -82,19 +82,12 @@ export default class WebGL {
     this.setRenderer();
     this.setPostProcessing();
     gsap.ticker.add(() => this.loop());
-    // this.loop();
 
     window.addEventListener("resize", () => this.onResize());
-    // window.addEventListener("load", () => {
-    this.pageLoaded = true;
+
     this.introAnim();
     this.setImages();
     this.projectsLinkHover();
-    // });
-    this.scroller.on("update", (scrollPos) => {
-      this.setLandingPlanePosition();
-      if (this.pageLoaded) this.setImagesPositions();
-    });
   }
 
   setScene() {
@@ -137,7 +130,7 @@ export default class WebGL {
   setLandingPlane() {
     const { top, left, width, height } =
       this.landingContainer.getBoundingClientRect();
-    this.landingPlaneGeo = new THREE.PlaneGeometry(1, 1);
+    this.landingPlaneGeo = this.planeGeometry.clone();
 
     this.landingPlaneMat = new THREE.ShaderMaterial({
       fragmentShader: landingFragment,
@@ -199,7 +192,7 @@ export default class WebGL {
     this.imagesStore = [...this.images].map((el, i) => {
       const bounds = el.getBoundingClientRect();
 
-      const geometry = new THREE.PlaneGeometry(1, 1);
+      const geometry = this.planeGeometry.clone();
       const material = new THREE.ShaderMaterial({
         fragmentShader: projectFragment,
         vertexShader: projectVertex,
@@ -214,6 +207,7 @@ export default class WebGL {
           uProgress: { value: 0 },
         },
       });
+
       const mesh = new THREE.Mesh(geometry, material);
       mesh.scale.set(bounds.width, bounds.height, 1);
       mesh.position.x = bounds.left - this.sizes.width / 2 + bounds.width / 2;
@@ -239,8 +233,6 @@ export default class WebGL {
     });
     if (!this.projectHoverOnRef.isActive()) {
       if (ref) ref.elLink.classList.add("hovered");
-      // else if (!this.projectHoverOutRef.isActive())
-      //   target.material.uniforms.uMouseUv.value = new THREE.Vector2(0, 1);
       this.projectHoverOnRef.play();
     }
   }
@@ -373,7 +365,7 @@ export default class WebGL {
     //Check target meshes
     for (const intersect of intersects) {
       let storeRef;
-      //find target in store to
+      //find target in store
       for (const image of this.imagesStore) {
         if (image.mesh == intersect.object) {
           image.hadRayOn = true;
@@ -397,6 +389,9 @@ export default class WebGL {
   loop() {
     this.elapsed = this.clock.getElapsedTime();
 
+    this.setLandingPlanePosition();
+    this.setImagesPositions();
+
     this.castRay();
 
     if (this.landingPlaneMat)
@@ -411,10 +406,7 @@ export default class WebGL {
         });
     }
 
-    // this.renderer.render(this.scene, this.camera);
     this.postProcess.composer.render(this.scene, this.camera);
-
-    // window.requestAnimationFrame(() => this.loop());
   }
 
   onResize() {
@@ -432,10 +424,6 @@ export default class WebGL {
     this.camera.fov = cameraFov;
     this.camera.aspect = this.sizes.width / this.sizes.height;
     this.camera.updateProjectionMatrix();
-    // this.scroller.resize({
-    //   width: this.sizes.width,
-    //   height: this.sizes.height,
-    // });
 
     //Update meshes size
     setTimeout(() => {
