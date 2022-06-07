@@ -1,6 +1,6 @@
 # Portfolio 2022
 
-preview : https://pierrenottin.com
+Live : https://pierrenottin.com
 
 ```bash
 # Install dependencies (only the first time)
